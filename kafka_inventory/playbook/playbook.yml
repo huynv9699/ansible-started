@@ -46,7 +46,7 @@
     ############################# Server Basics #############################
 
     # The id of the broker. This must be set to a unique integer for each broker.
-    # kafka_broker_id: 0
+    kafka_broker_id: 0
 
     # Enable auto creation of topic on the server
     kafka_auto_create_topics_enable: false
