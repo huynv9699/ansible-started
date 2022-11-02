@@ -1,0 +1,16 @@
+---
+- hosts: test-server
+  remote_user: vagrant
+  tasks:
+    - name: Include kafka role
+      include_role:
+        name: ../../kafka
+  vars:
+    # install jdk
+    jdk_version: 18.0.2.1
+    jdk_download_url: https://download.oracle.com/java/18/archive/jdk-{{ jdk_version }}_linux-x64_bin.tar.gz
+
+    # install kafka
+    kafka_scala_version: 3.3.1
+    kafka_version: 2.13
+    url_download_kafka: https://dlcdn.apache.org/kafka/{{ kafka_scala_version }}/kafka_{{ kafka_version }}-{{ kafka_scala_version }}.tgz

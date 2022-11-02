@@ -1,0 +1,5 @@
+all:
+  children:
+    test-server:
+      hosts:
+        10.0.20.21
