@@ -1,21 +1,80 @@
 ---
 
-- name: download kafka
+- name: check if kafka user exists
   become: true
-  get_url:
-    url: https://dlcdn.apache.org/kafka/3.3.1/kafka_2.13-3.3.1.tgz
-    dest: /opt/kafka_2.13-3.3.1.tgz
+  command: id {{ kafka_user }}
+  ignore_errors: true
+  changed_when: false
+  register: user_exists
 
-- name: extract kafka
+- name: add kafka group
   become: true
-  unarchive:
-    src: /opt/kafka_2.13-3.3.1.tgz
-    dest: /opt
-    remote_src: yes
+  group:
+    name: "{{ kafka_group }}"
+    state: present
+  when: user_exists is failed
 
-- name: start kafka with kraft
-  shell: |
-    cd /opt/kafka_2.13-3.3.1
-    KAFKA_CLUSTER_ID="$(bin/kafka-storage.sh random-uuid)"
-    sudo bin/kafka-storage.sh format -t $KAFKA_CLUSTER_ID -c config/kraft/server.properties
-    sudo bin/kafka-server-start.sh config/kraft/server.properties
+- name: add kafka user
+  become: true
+  user:
+    name: "{{ kafka_user }}"
+    group: "{{ kafka_group }}"
+    append: true
+    state: present
+    shell: /bin/false
+    system: true
+    create_home: false
+    home: /
+  when: user_exists is failed
+
+- name: create kafka app directory
+  become: true
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ kafka_user }}"
+    group: "{{ kafka_group }}"
+    mode: 0755
+  with_items:
+    - "{{ kafka_app_dir }}"
+    - "{{ kafka_data_log_dirs }}"
+    - "{{ kafka_log_dir }}"
+
+# Download Kafka
+- block:
+  - name: preinstall | download kafka package
+    become: false
+    get_url:
+      url: "{{ kafka_download_url }}"
+      dest: "{{ kafka_download_local_dir }}/kafka_{{ kafka_scala_version }}-{{ kafka_version }}.tgz"
+      validate_certs: false
+    register: _download_binary
+    until: _download_binary is succeeded
+    retries: 5
+    delay: 2
+    delegate_to: localhost
+    when: enable_download_binary
+
+  - name: preinstall | unpack kafka package
+    become: false
+    unarchive:
+      src: "{{ kafka_download_local_dir }}/kafka_{{ kafka_scala_version }}-{{ kafka_version }}.tgz"
+      dest: "{{ kafka_download_local_dir }}"
+      creates: "{{ kafka_download_local_dir }}/kafka_{{ kafka_scala_version }}-{{ kafka_version }}"
+    delegate_to: localhost
+    check_mode: false
+
+  - name: preinstall | copy kafka package to remote server
+    become: true
+    synchronize:
+      src: "{{ kafka_download_local_dir }}/kafka_{{ kafka_scala_version }}-{{ kafka_version }}/"
+      dest: "{{ kafka_app_dir }}"
+
+  - name: preinstall | change kafka_app_dir permissions
+    become: true
+    file:
+      path: "{{ kafka_app_dir }}"
+      owner: "{{ kafka_user }}"
+      group: "{{ kafka_group }}"
+      mode: 0755
+      recurse: true
