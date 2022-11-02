@@ -1,10 +1,10 @@
 ---
-- hosts: test-server
+- hosts: all
   remote_user: vagrant
   tasks:
     - name: Include kafka role
       include_role:
-        name: ../../kafka
+        name: ../../../kafka
   vars:
     # install jdk
     jdk_version: 18.0.2.1
