@@ -1,5 +1,5 @@
 ---
-- hosts: test-server
+- hosts: all
   remote_user: vagrant
   tasks:
     - name: Include kafka role
