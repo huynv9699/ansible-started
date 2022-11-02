@@ -62,8 +62,8 @@
       dest: "{{ kafka_download_local_dir }}"
       creates: "{{ kafka_download_local_dir }}/kafka_{{ kafka_scala_version }}-{{ kafka_version }}"
       remote_src: yes
-    # delegate_to: localhost
-    # check_mode: false
+    delegate_to: localhost
+    check_mode: false
 
   - name: copy kafka package to remote server
     become: true
@@ -71,7 +71,7 @@
       src: "{{ kafka_download_local_dir }}/kafka_{{ kafka_scala_version }}-{{ kafka_version }}/"
       dest: "{{ kafka_app_dir }}"
 
-  - name: preinstall | change kafka_app_dir permissions
+  - name: change kafka_app_dir permissions
     become: true
     file:
       path: "{{ kafka_app_dir }}"

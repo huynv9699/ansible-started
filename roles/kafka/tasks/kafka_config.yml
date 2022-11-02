@@ -1,6 +1,6 @@
 ---
 
-- name: configure | template configuration file to server.properties (KRaft mode)
+- name: template configuration file to server.properties (KRaft mode)
   become: true
   template:
     src: config/server_kraft.properties.j2
@@ -10,7 +10,7 @@
     mode: 0644
   when: kraft_enabled
 
-- name: configure | template meta.properties file (KRaft mode)
+- name: template meta.properties file (KRaft mode)
   become: true
   template:
     src: config/meta.properties.j2
@@ -20,7 +20,7 @@
     mode: 0644
   when: kraft_enabled
 
-- name: configure | template configuration file to log4j.properties
+- name: template configuration file to log4j.properties
   become: true
   template:
     src: config/log4j.properties.j2
@@ -29,7 +29,7 @@
     group: "{{ kafka_group }}"
     mode: 0644
 
-- name: configure | template kafka systemd service
+- name: template kafka systemd service
   become: true
   template:
     src: etc/kafka.service.j2
