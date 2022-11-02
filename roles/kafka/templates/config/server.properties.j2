@@ -1,0 +1,85 @@
+# {{ ansible_managed }}
+
+
+############################# Server Basics #############################
+
+broker.id={{ kafka_broker_id }}
+
+auto.create.topics.enable={{ kafka_auto_create_topics_enable }}
+auto.leader.rebalance.enable=true
+delete.topic.enable={{ kafka_delete_topic_enable }}
+default.replication.factor={{ kafka_default_replication_factor }}
+
+background.threads={{ kafka_background_threads }}
+
+############################# Socket Server Settings #############################
+
+listeners={{ kafka_listeners | join(",")}}
+{% if kafka_advertised_listeners is defined %}
+advertised.listeners={{ kafka_advertised_listeners | join(",")}}
+{% endif %}
+
+num.network.threads={{ kafka_num_network_threads }}
+num.io.threads={{ kafka_num_io_threads }}
+num.replica.fetchers={{ kafka_num_replica_fetchers }}
+
+socket.send.buffer.bytes={{ kafka_socket_send_buffer_bytes }}
+socket.receive.buffer.bytes={{ kafka_socket_receive_buffer_bytes }}
+socket.request.max.bytes={{ kafka_socket_request_max_bytes }}
+replica.socket.receive.buffer.bytes={{ kafka_replica_socket_receive_buffer_bytes }}
+controller.socket.timeout.ms={{ kafka_controller_socket_timeout_ms }}
+
+############################# Log Basics #############################
+
+log.dirs={{ kafka_data_log_dirs }}
+num.partitions={{ kafka_num_partitions }}
+
+num.recovery.threads.per.data.dir={{ kafka_num_recovery_threads_per_data_dir }}
+log.cleaner.threads={{ kafka_log_cleaner_threads }}
+
+############################# Internal Topic Settings #############################
+
+offsets.topic.replication.factor={{ kafka_offsets_topic_replication_factor }}
+transaction.state.log.replication.factor={{ kafka_transaction_state_log_replication_factor }}
+transaction.state.log.min.isr={{ kafka_transaction_state_log_min_isr }}
+
+############################# Log Flush Policy #############################
+
+log.flush.interval.messages={{ kafka_log_flush_interval_messages }}
+log.flush.interval.ms={{ kafka_log_flush_interval_ms }}
+
+############################# Log Retention Policy #############################
+
+log.retention.hours={{ kafka_log_retention_hours }}
+# log.retention.bytes=1073741824
+log.segment.bytes={{ kafka_log_segment_bytes }}
+log.retention.check.interval.ms={{ kafka_log_retention_check_interval_ms }}
+log.cleaner.backoff.ms={{ kafka_log_cleaner_backoff_ms }}
+
+############################# Zookeeper #############################
+
+zookeeper.connect={{ kafka_zookeeper_connect }}
+zookeeper.connection.timeout.ms={{ kafka_zookeeper_connection_timeout_ms }}
+zookeeper.session.timeout.ms={{ kafka_zookeeper_session_timeout_ms }}
+
+############################# Timeout #############################
+
+offsets.commit.timeout.ms={{ kafka_offsets_commit_timeout_ms }}
+
+replica.fetch.wait.max.ms={{ kafka_replica_fetch_wait_max_ms }}
+replica.fetch.max.bytes={{ kafka_replica_fetch_max_bytes }}
+
+############################# Group Coordinator Settings #############################
+
+# The following configuration specifies the time, in milliseconds, that the GroupCoordinator will delay the initial consumer rebalance.
+# The rebalance will be further delayed by the value of group.initial.rebalance.delay.ms as new members join the group, up to a maximum of max.poll.interval.ms.
+# The default value for this is 3 seconds.
+# We override this to 0 here as it makes for a better out-of-the-box experience for development and testing.
+# However, in production environments the default value of 3 seconds is more suitable as this will help to avoid unnecessary, and potentially expensive, rebalances during application startup.
+group.initial.rebalance.delay.ms={{ kafka_group_initial_rebalance_delay_ms }}
+
+############################## Customized configuration ###############################
+message.max.bytes={{ kafka_message_max_bytes }}
+min.insync.replicas={{ kafka_min_insync_replicas }}
+queued.max.requests={{ kafka_queued_max_requests }}
+unclean.leader.election.enable={{ kafka_unclean_leader_election_enable }}

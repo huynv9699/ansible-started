@@ -1,0 +1,41 @@
+---
+
+- name: configure | template configuration file to server.properties (KRaft mode)
+  become: true
+  template:
+    src: config/server_kraft.properties.j2
+    dest: "{{ kafka_app_dir }}/config/server.properties"
+    owner: "{{ kafka_user }}"
+    group: "{{ kafka_group }}"
+    mode: 0644
+  when: kraft_enabled
+
+- name: configure | template meta.properties file (KRaft mode)
+  become: true
+  template:
+    src: config/meta.properties.j2
+    dest: "{{ kafka_data_dir }}/meta.properties"
+    owner: "{{ kafka_user }}"
+    group: "{{ kafka_group }}"
+    mode: 0644
+  when: kraft_enabled
+
+- name: configure | template configuration file to log4j.properties
+  become: true
+  template:
+    src: config/log4j.properties.j2
+    dest: "{{ kafka_app_dir }}/config/log4j.properties"
+    owner: "{{ kafka_user }}"
+    group: "{{ kafka_group }}"
+    mode: 0644
+
+- name: configure | template kafka systemd service
+  become: true
+  template:
+    src: etc/kafka.service.j2
+    dest: /etc/systemd/system/kafka.service
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - start kafka service

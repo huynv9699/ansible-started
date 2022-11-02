@@ -1,4 +1,5 @@
 ---
 
-- import_tasks: install_jdk.yml
+- import_tasks: dependencies.yml
 - import_tasks: install_kafka.yml
+- import_tasks: kafka_config.yml
