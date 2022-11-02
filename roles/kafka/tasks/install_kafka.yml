@@ -42,7 +42,7 @@
 
 # Download Kafka
 - block:
-  - name: preinstall | download kafka package
+  - name: download kafka package
     become: false
     get_url:
       url: "{{ kafka_download_url }}"
@@ -55,16 +55,17 @@
     delegate_to: localhost
     when: enable_download_binary
 
-  - name: preinstall | unpack kafka package
+  - name: unpack kafka package
     become: false
     unarchive:
       src: "{{ kafka_download_local_dir }}/kafka_{{ kafka_scala_version }}-{{ kafka_version }}.tgz"
       dest: "{{ kafka_download_local_dir }}"
       creates: "{{ kafka_download_local_dir }}/kafka_{{ kafka_scala_version }}-{{ kafka_version }}"
     delegate_to: localhost
+    remote_src: true
     check_mode: false
 
-  - name: preinstall | copy kafka package to remote server
+  - name: copy kafka package to remote server
     become: true
     synchronize:
       src: "{{ kafka_download_local_dir }}/kafka_{{ kafka_scala_version }}-{{ kafka_version }}/"
