@@ -62,7 +62,7 @@
       dest: "{{ kafka_download_local_dir }}"
       creates: "{{ kafka_download_local_dir }}/kafka_{{ kafka_scala_version }}-{{ kafka_version }}"
     delegate_to: localhost
-    remote_src: true
+    remote_src: yes
     check_mode: false
 
   - name: copy kafka package to remote server
