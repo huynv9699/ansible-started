@@ -1,11 +1,13 @@
 ---
 
 - name: download kafka
+  become: true
   get_url:
     url: https://dlcdn.apache.org/kafka/3.3.1/kafka_2.13-3.3.1.tgz
     dest: /opt/kafka_2.13-3.3.1.tgz
 
 - name: extract kafka
+  become: true
   unarchive:
     src: /opt/kafka_2.13-3.3.1.tgz
     dest: /opt

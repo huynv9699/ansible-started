@@ -1,17 +1,20 @@
 ---
 
 - name: download jdk
+  become: true
   get_url:
     url: https://download.oracle.com/java/18/archive/jdk-18.0.2.1_linux-x64_bin.tar.gz
     dest: /opt/jdk-18.0.2.1_linux-x64_bin.tar.gz
 
 - name: extract jdk
+  become: true
   unarchive:
     src: /opt/jdk-18.0.2.1_linux-x64_bin.tar.gz
     dest: /opt
     remote_src: yes
 
 - name: set jdk env
+  become: true
   lineinfile:
     path: /etc/profile
     state: present
